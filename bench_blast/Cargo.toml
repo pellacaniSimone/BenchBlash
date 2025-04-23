@@ -1,6 +1,16 @@
-[package]
-name = "bench_blast"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+resolver = "2"
+members = [
+    "ui",
+    "web",
+    "desktop",
+    "mobile",
+    "api",
+]
 
-[dependencies]
+[workspace.dependencies]
+dioxus = { version = "0.6.0" }
+
+# workspace
+ui = { path = "ui" }
+api = { path = "api" }
