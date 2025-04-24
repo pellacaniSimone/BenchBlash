@@ -10,7 +10,7 @@ project/
 │  ├─ main.rs # The entrypoint for the app.
 │  ├─ components/
 │  │  ├─ mod.rs # Defines the components module
-│  │  ├─ hero.rs # The Hero component for use in the home page
+│  │  ├─ home.rs # The Home component for use in the home page
 ├─ Cargo.toml # The Cargo.toml file defines the dependencies and feature flags for your project
 ```
 

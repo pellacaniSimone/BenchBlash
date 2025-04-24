@@ -5,7 +5,7 @@ body {
     margin: 20px;
 }
 
-#hero {
+#home {
     margin: 0;
     display: flex;
     flex-direction: column;
