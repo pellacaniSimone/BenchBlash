@@ -1,9 +1,10 @@
 use dioxus::prelude::*;
+use crate::components::urls::Route;
 
 const HEADER_SVG: Asset = asset!("/assets/header.svg");
 
 #[component]
-fn Home() -> Element {
+pub fn Home() -> Element {
     rsx! {
         div {
             id: "home",
@@ -22,6 +23,7 @@ fn Home() -> Element {
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/styling/main.css");
+
 #[component]
 pub fn App() -> Element {
     rsx! {
@@ -46,15 +48,6 @@ pub fn NavBar() -> Element {
         nav { id: "navbar",  Link { to: Route::Home {}, "Home" }  }
         Outlet::<Route> {}
     }
-}
-
-#[derive(Routable, Clone, Debug, PartialEq)]
-#[rustfmt::skip]
-#[allow(clippy::empty_line_after_outer_attr)]
-pub enum Route {
-    #[layout(NavBar)]
-    #[route("/")] Home {},
-    #[route("/:..route")] PageNotFound { route: Vec<String>,  },
 }
 
 
