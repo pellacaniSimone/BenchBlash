@@ -42,11 +42,16 @@ pub fn PageNotFound(route: Vec<String>) -> Element {
     }
 }
 
+const NAV_CSS: Asset = asset!("/assets/styling/main.css");
 #[component]
 pub fn NavBar() -> Element {
     rsx! {
-        nav { id: "navbar",  Link { to: Route::Home {}, "Home" }  }
-        Outlet::<Route> {}
+        document::Link { rel: "stylesheet", href: NAV_CSS },
+        div {
+            id: "nav",
+            nav { id: "navbar",  Link { to: Route::Home {}, "Home" , }  }
+            Outlet::<Route> {}
+        }
     }
 }
 
