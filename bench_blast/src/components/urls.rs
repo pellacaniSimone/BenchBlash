@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use crate::components::base_view::*;
+use crate::components::templates::*;
 
 #[derive(Routable, Clone, Debug, PartialEq)]
 #[rustfmt::skip]

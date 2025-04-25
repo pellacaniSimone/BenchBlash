@@ -1,4 +1,4 @@
-mod base_view;
+mod templates;
 mod urls;
-pub use base_view::*;
+pub use templates::*;
 pub use urls::*;
