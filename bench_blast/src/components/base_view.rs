@@ -49,7 +49,10 @@ pub fn NavBar() -> Element {
         document::Link { rel: "stylesheet", href: NAV_CSS },
         div {
             id: "nav",
-            nav { id: "navbar",  Link { to: Route::Home {}, "Home" , }  }
+            nav { id: "navbar",  
+                Link { to: Route::Home {}, button { " Home " }, }  
+                Link { to: Route::Form {}, button { " Form " }, } 
+            }
             Outlet::<Route> {}
         }
     }
@@ -185,3 +188,6 @@ pub fn Form() -> Element {
         }
     }
 }
+
+
+
