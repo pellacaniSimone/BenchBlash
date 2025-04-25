@@ -17,7 +17,7 @@ thread_local! {
 }
 
 #[server]
-async fn save_bench(test: String, result:f64) -> Result<(), ServerFnError> {
+pub async fn save_bench(test: String, result:f64) -> Result<(), ServerFnError> {
     DB.with(|f| f.execute("INSERT INTO benchmarks (test,result) VALUES (?1,?2)", &[&image] , result))?;
     Ok(())
 }

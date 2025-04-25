@@ -7,5 +7,6 @@ use crate::components::base_view::*;
 pub enum Route {
     #[layout(NavBar)]
     #[route("/")] Home {},
+    #[route("/form")] Form {},
     #[route("/:..route")] PageNotFound { route: Vec<String>, },
 } 
