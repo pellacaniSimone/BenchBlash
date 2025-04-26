@@ -1,6 +1,5 @@
 use dioxus::prelude::*;
+use components::ui::templates::*;
 mod components;
-use components::App;
 
-
-fn main() { dioxus::launch(App); }
+fn main() { launch(App); }

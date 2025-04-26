@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use crate::components::templates::*;
+use crate::components::ui::templates::{PageNotFound,Form,Home,NavBar};
 
 #[derive(Routable, Clone, Debug, PartialEq)]
 #[rustfmt::skip]

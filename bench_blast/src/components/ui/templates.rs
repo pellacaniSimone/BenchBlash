@@ -1,10 +1,12 @@
 use dioxus::prelude::*;
 use crate::components::urls::Route;
+use crate::components::views::prime_cpu_bench::cpu;
 
 const HEADER_SVG: Asset = asset!("/assets/header.svg");
 
 #[component]
 pub fn Home() -> Element {
+    let mut benchmark = use_signal(|| String::from("nessuna azione"));
     rsx! {
         div {
             id: "home",
@@ -16,6 +18,10 @@ pub fn Home() -> Element {
                 a { href: "https://github.com/DioxusLabs/sdk", "⚙️ Dioxus Development Kit" }
                 a { href: "https://marketplace.visualstudio.com/items?itemName=DioxusLabs.dioxus", "💫 VSCode Extension" }
                 a { href: "https://discord.gg/XgGxMSkvUM", "👋 Community Discord" }
+            }
+            button { id: "run" , onclick: move |_| benchmark.set(cpu() ), "Run benchmak" }
+            div { id: "output",
+                p { "{benchmark}" }
             }
         }
     }
