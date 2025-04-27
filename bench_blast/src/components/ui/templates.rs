@@ -7,15 +7,34 @@ const HEADER_SVG: Asset = asset!("/assets/header.svg");
 #[component]
 pub fn Home() -> Element {
     let mut benchmark = use_signal(|| String::from("nessuna azione"));
+    let mut is_loading = use_signal(|| false);
+
     rsx! {
+        document::Link { rel: "stylesheet", href: asset!("/assets/styling/spinner.css") }
         div {
             id: "home",
             img { src: HEADER_SVG, id: "header" }
-            div { id: "links",
-             }
-            button { id: "run" , onclick: move |_| benchmark.set(cpu() ), "Run benchmak" }
-            div { id: "output",
-                p { "{benchmark}" }
+            div { id: "links" }
+
+            button {
+                id: "run",
+                onclick: move |_| {
+                    is_loading.set(true);
+                    let result = cpu();
+                    benchmark.set(result);
+                    is_loading.set(false);
+                },
+                "Run benchmark"
+            }
+
+            div {
+                id: "output",
+                if *is_loading.read() {
+                    div { class: "Spinner" }
+                    p { class: "loading-text", "Running benchmark..." }
+                } else {
+                    p { "{benchmark}" }
+                }
             }
         }
     }
@@ -38,30 +57,31 @@ pub fn PageNotFound(route: Vec<String>) -> Element {
     rsx! {
         h1 { "Page not found" }
         p { "We are terribly sorry, but the page you requested doesn't exist 💔." }
-        pre { color: "red", "log:\nattemped to navigate to: {route:?}" }
+        pre { color: "red", "log:\nattempted to navigate to: {route:?}" }
     }
 }
 
 const NAV_CSS: Asset = asset!("/assets/styling/main.css");
+
 #[component]
 pub fn NavBar() -> Element {
     rsx! {
-        document::Link { rel: "stylesheet", href: NAV_CSS },
+        document::Link { rel: "stylesheet", href: NAV_CSS }
         div {
             id: "nav",
-            nav { id: "navbar",  
-                Link { to: Route::Home {}, button { " Home " }, }  
-                Link { to: Route::Form {}, button { " Form " }, } 
+            nav {
+                id: "navbar",
+                Link { to: Route::Home {}, button { " Home " } }
+                Link { to: Route::Form {}, button { " Form " } }
             }
             Outlet::<Route> {}
         }
     }
 }
 
-
-
 use std::collections::HashMap;
 
+#[component]
 pub fn Form() -> Element {
     let mut values = use_signal(HashMap::new);
     let mut submitted_values = use_signal(HashMap::new);
@@ -188,6 +208,3 @@ pub fn Form() -> Element {
         }
     }
 }
-
-
-
