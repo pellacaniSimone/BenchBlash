@@ -14,6 +14,7 @@ pub mod models{
 pub use views::prime_cpu_bench::*;
 pub mod views{
   pub mod prime_cpu_bench;
+  pub mod multicore_cpu_benchmark;
 }
 
 pub use urls::*;

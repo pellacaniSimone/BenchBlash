@@ -1,8 +1,10 @@
 use dioxus::prelude::*;
 use crate::components::urls::Route;
 use crate::components::views::prime_cpu_bench::cpu;
+use crate::components::views::multicore_cpu_benchmark::cpu_mt;
+use std::thread;
 
-const HEADER_SVG: Asset = asset!("/assets/header.svg");
+const HEADER_SVG: Asset = asset!("/assets/animation_example.svg");
 
 #[component]
 pub fn Home() -> Element {
@@ -19,12 +21,25 @@ pub fn Home() -> Element {
             button {
                 id: "run",
                 onclick: move |_| {
+
                     is_loading.set(true);
                     let result = cpu();
                     benchmark.set(result);
                     is_loading.set(false);
+
                 },
-                "Run benchmark"
+                "Run singlecore Cpu benchmark"
+            }
+
+            button {
+                id: "run",
+                onclick: move |_| {
+                    is_loading.set(true);
+                    let result = cpu_mt();
+                    benchmark.set(result);
+                    is_loading.set(false);
+                },
+                "Run Multicore Cpu benchmark"
             }
 
             div {

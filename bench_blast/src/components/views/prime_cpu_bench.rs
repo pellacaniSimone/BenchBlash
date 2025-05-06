@@ -26,15 +26,15 @@ fn compute_benchmark<F>(mut within_time: F) -> String
 where
     F: FnMut() -> bool,
 {
-    let mut p = 2u32;
-    let mut tested = 0u32;
-    let mut fractional = 0.0f64;
+    let mut p: u32 = 2;
+    let mut tested: u32 = 0;
+    let mut fractional: f64 = 0.0;
 
     while within_time() {
-        let mp = (1u128 << p) - 1;
-        let sqrt = (mp as f64).sqrt() as u128;
+        let mp: u128 = (1 << p) - 1;
+        let sqrt: u128 = (mp as f64).sqrt() as u128;
 
-        let mut i = 2u128;
+        let mut i: u128 = 2;
         while i <= sqrt {
             if mp % i == 0 { break; }
             if !within_time() {
