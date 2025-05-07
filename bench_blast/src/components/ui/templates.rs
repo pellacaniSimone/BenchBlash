@@ -12,21 +12,23 @@ pub fn Home() -> Element {
     let mut is_loading = use_signal(|| false);
 
     rsx! {
-        document::Link { rel: "stylesheet", href: asset!("/assets/styling/spinner.css") }
+        link { rel: "stylesheet", href: asset!("/assets/styling/spinner.css") }
+
         div {
             id: "home",
             img { src: HEADER_SVG, id: "header" }
+
             div { id: "links" }
 
             button {
                 id: "run",
                 onclick: move |_| {
-
-                    is_loading.set(true);
-                    let result = cpu();
-                    benchmark.set(result);
-                    is_loading.set(false);
-
+                    spawn(async move {
+                        is_loading.set(true);
+                        let result = cpu()  ;
+                        benchmark.set(result);
+                        is_loading.set(false);
+                    });
                 },
                 "Run singlecore Cpu benchmark"
             }
@@ -34,10 +36,12 @@ pub fn Home() -> Element {
             button {
                 id: "run",
                 onclick: move |_| {
-                    is_loading.set(true);
-                    let result = cpu_mt();
-                    benchmark.set(result);
-                    is_loading.set(false);
+                    spawn(async move {
+                        is_loading.set(true);
+                        let result = cpu_mt(); 
+                        benchmark.set(result);
+                        is_loading.set(false);
+                    });
                 },
                 "Run Multicore Cpu benchmark"
             }
@@ -54,6 +58,84 @@ pub fn Home() -> Element {
         }
     }
 }
+
+
+
+
+
+#[component]
+pub fn Home2() -> Element {
+    let mut benchmark = use_signal(|| String::from("nessuna azione"));
+    let mut is_loading = use_signal(|| false);
+
+    let run_singlecore = {
+        let mut benchmark = benchmark.clone();
+        let mut is_loading = is_loading.clone();
+        move |_| {
+            spawn(async move {
+                is_loading.set(true);
+                let result = cpu();
+                benchmark.set(result);
+                is_loading.set(false);
+            });
+        }
+    };
+
+    let run_multicore = {
+        let mut benchmark = benchmark.clone();
+        let mut is_loading = is_loading.clone();
+        move |_| {
+            spawn(async move {
+                is_loading.set(true);
+                let result = cpu_mt();
+                benchmark.set(result);
+                is_loading.set(false);
+            });
+        }
+    };
+
+    rsx! {
+        link { rel: "stylesheet", href: asset!("/assets/styling/spinner.css") }
+
+        div {
+            id: "home",
+            img { src: HEADER_SVG, id: "header" }
+
+            div { id: "links" }
+
+            button {
+                id: "run",
+                onclick: run_singlecore,
+                "Run singlecore Cpu benchmark"
+            }
+
+            button {
+                id: "run",
+                onclick: run_multicore,
+                "Run Multicore Cpu benchmark"
+            }
+
+            div {
+                id: "output",
+                if *is_loading.read() {
+                    div { class: "Spinner" }
+                    p { class: "loading-text", "Running benchmark..." }
+                } else {
+                    p { "{benchmark}" }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/styling/main.css");
@@ -86,7 +168,7 @@ pub fn NavBar() -> Element {
             id: "nav",
             nav {
                 id: "navbar",
-                Link { to: Route::Home {}, button { " Home " } }
+                Link { to: Route::Home2 {}, button { " Home " } }
                 Link { to: Route::Form {}, button { " Form " } }
             }
             Outlet::<Route> {}
