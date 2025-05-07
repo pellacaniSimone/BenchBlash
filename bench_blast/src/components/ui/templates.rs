@@ -1,72 +1,23 @@
 use dioxus::prelude::*;
 use crate::components::urls::Route;
 use crate::components::views::prime_cpu_bench::cpu;
+#[cfg(not(target_arch = "wasm32"))]
 use crate::components::views::multicore_cpu_benchmark::cpu_mt;
+#[cfg(not(target_arch = "wasm32"))]
 use std::thread;
-
+#[cfg(target_arch = "wasm32")]
+use web_sys::window;
 const HEADER_SVG: Asset = asset!("/assets/animation_example.svg");
+
+
+
+
 
 #[component]
 pub fn Home() -> Element {
-    let mut benchmark = use_signal(|| String::from("nessuna azione"));
-    let mut is_loading = use_signal(|| false);
+    let benchmark = use_signal(|| String::from("nessuna azione"));
+    let is_loading = use_signal(|| false);
 
-    rsx! {
-        link { rel: "stylesheet", href: asset!("/assets/styling/spinner.css") }
-
-        div {
-            id: "home",
-            img { src: HEADER_SVG, id: "header" }
-
-            div { id: "links" }
-
-            button {
-                id: "run",
-                onclick: move |_| {
-                    spawn(async move {
-                        is_loading.set(true);
-                        let result = cpu()  ;
-                        benchmark.set(result);
-                        is_loading.set(false);
-                    });
-                },
-                "Run singlecore Cpu benchmark"
-            }
-
-            button {
-                id: "run",
-                onclick: move |_| {
-                    spawn(async move {
-                        is_loading.set(true);
-                        let result = cpu_mt(); 
-                        benchmark.set(result);
-                        is_loading.set(false);
-                    });
-                },
-                "Run Multicore Cpu benchmark"
-            }
-
-            div {
-                id: "output",
-                if *is_loading.read() {
-                    div { class: "Spinner" }
-                    p { class: "loading-text", "Running benchmark..." }
-                } else {
-                    p { "{benchmark}" }
-                }
-            }
-        }
-    }
-}
-
-
-
-
-
-#[component]
-pub fn Home2() -> Element {
-    let mut benchmark = use_signal(|| String::from("nessuna azione"));
-    let mut is_loading = use_signal(|| false);
 
     let run_singlecore = {
         let mut benchmark = benchmark.clone();
@@ -85,12 +36,22 @@ pub fn Home2() -> Element {
         let mut benchmark = benchmark.clone();
         let mut is_loading = is_loading.clone();
         move |_| {
-            spawn(async move {
-                is_loading.set(true);
-                let result = cpu_mt();
-                benchmark.set(result);
+            is_loading.set(true);
+            #[cfg(not(target_arch = "wasm32"))]
+            {
+                spawn(async move {
+                    let result = cpu_mt();
+                    benchmark.set(result);
+                    is_loading.set(false);
+                });
+            }
+            #[cfg(target_arch = "wasm32")]
+            {
+                if let Some(win) = window() {
+                    let _ = win.alert_with_message("Multicore not deployed on WebAssembly");
+                }
                 is_loading.set(false);
-            });
+            }
         }
     };
 
@@ -168,7 +129,7 @@ pub fn NavBar() -> Element {
             id: "nav",
             nav {
                 id: "navbar",
-                Link { to: Route::Home2 {}, button { " Home " } }
+                Link { to: Route::Home {}, button { " Home " } }
                 Link { to: Route::Form {}, button { " Form " } }
             }
             Outlet::<Route> {}

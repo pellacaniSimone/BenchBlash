@@ -1,4 +1,3 @@
-
 const TIME_LIMIT_SECS: u64 = 10;
 const BASE : u128 = 2; 
 static SAFE_COUNTER : std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(2);
@@ -12,6 +11,19 @@ fn mersenne() -> u128 {
     BASE.pow(next_exponent()) -1
 }
 
+fn compute_prime<F>(mut within_time: F, mn: u128, sqrt: u128) -> f64 
+where
+    F: FnMut() -> bool,
+{
+    for i in 2..sqrt {
+        if mn % i == 0 { return -1.0 ;} // is prime
+        if !within_time() {
+            return i as f64 / sqrt as f64; // time ended, fraction tested
+        }
+    }
+    1.0
+}
+
 
 
 fn compute_benchmark<F>(mut within_time: F) -> String
@@ -22,18 +34,9 @@ where
     let mut if_fractional: f64 = 0.0;
 
     while within_time() {
-        let mp: u128 = mersenne();
-        let sqrt: u128 = (mp as f64).sqrt() as u128;
-
-        let mut i: u128 = BASE;
-        while i <= sqrt {
-            if mp % i == 0 { break; }
-            if !within_time() {
-                if_fractional = i as f64 / sqrt as f64;
-                break;
-            }
-            i += 1;
-        }
+        let mn: u128 = mersenne();
+        let sqrt: u128 = (mn as f64).sqrt() as u128;
+        if_fractional = compute_prime(&mut within_time, mn , sqrt) ;
     }
 
     let score  = (next_exponent())  as f64 + if_fractional;
